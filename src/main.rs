@@ -1,5 +1,6 @@
 
-use reqwest::blocking::Client;
+use reqwest::Client;
+use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use serde_json::value;
 use std::env;
@@ -15,18 +16,51 @@ struct GameStats {
     date: String,
 }
 
-fn main() {
+
+#[tokio::main]
+async fn getStats() -> Result<(), reqwest::Error> {
     // Take input from user
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
         println!("Enter the name of your team: ");
-        return;
+         return Ok(());
     }
     let team_name = &args[1];
 
-    // GET request to API
     let client = Client::new();
-    let api_values =  Secrets::new();
-    let url = format!("https://api-football-v1.p.rapidapi.com/v3/timezone");  // Replace with the 
-    println!("Hello, world!");
+    let api_secrets = Secrets::new();
+
+    // Prepare headers as a HashMap
+    let mut headers = reqwest::header::HeaderMap::new();
+    headers.insert(reqwest::header::USER_AGENT, api_secrets.key.parse().unwrap());
+
+    // Prepare query parameters as a HashMap
+    let mut params = HashMap::new();
+    params.insert("league", "premiere league");
+    params.insert("season", "2023");
+    params.insert("team", team_name);
+
+    // Build the request
+    let response = client
+        .get("https://api.example.com/endpoint")
+        .headers(headers)
+        .query(&params)
+        .send()
+        .await?;
+
+    // Check if the request was successful
+    if response.status().is_success() {
+        let response_text = response.text().await?;
+        println!("Response: {}", response_text);
+    } else {
+        println!("Request failed with status code: {}", response.status());
+    }
+
+    Ok(())
+}
+
+
+ fn main() {
+    // Take input from user
+    getStats();
 }
