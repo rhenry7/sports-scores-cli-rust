@@ -18,14 +18,7 @@ struct GameStats {
 
 
 #[tokio::main]
-async fn getStats() -> Result<(), reqwest::Error> {
-    // Take input from user
-    let args: Vec<String> = env::args().collect();
-    if args.len() < 2 {
-        println!("Enter the name of your team: ");
-         return Ok(());
-    }
-    let team_name = &args[1];
+async fn getStats(team_name: String) -> Result<(), reqwest::Error> {
 
     let client = Client::new();
     let api_secrets = Secrets::new();
@@ -38,7 +31,7 @@ async fn getStats() -> Result<(), reqwest::Error> {
     let mut params = HashMap::new();
     params.insert("league", "premiere league");
     params.insert("season", "2023");
-    params.insert("team", team_name);
+    params.insert("team", &team_name);
 
     // Build the request
     let response = client
@@ -62,5 +55,12 @@ async fn getStats() -> Result<(), reqwest::Error> {
 
  fn main() {
     // Take input from user
-    getStats();
+        // Take input from user
+    let args: Vec<String> = env::args().collect();
+    let mut team_name = String::new();
+    println!("Enter the name of your team: ");
+    println!("Hello , {}", team_name);
+    //let b1 = std::io::stdin().read_line(&mut line).unwrap();
+    //let _ = getStats(team_name);
 }
+
