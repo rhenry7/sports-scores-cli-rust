@@ -27,6 +27,7 @@ async fn getStats(team_name: String) -> Result<(), reqwest::Error> {
     let mut headers = reqwest::header::HeaderMap::new();
     headers.insert(reqwest::header::USER_AGENT, api_secrets.key.parse().unwrap());
 
+    println!("made it in the get stats function");
     // Prepare query parameters as a HashMap
     let mut params = HashMap::new();
     params.insert("league", "premiere league");
@@ -52,15 +53,25 @@ async fn getStats(team_name: String) -> Result<(), reqwest::Error> {
     Ok(())
 }
 
+ 
+fn getNames() -> String{
+   let mut line = String::new();
+   println!("Enter your team name :");
+   std::io::stdin().read_line(&mut line).unwrap();
+   return line;
+}
 
  fn main() {
     // Take input from user
         // Take input from user
-    let args: Vec<String> = env::args().collect();
-    let mut team_name = String::new();
-    println!("Enter the name of your team: ");
-    println!("Hello , {}", team_name);
+
+    // let mut team_name = String::new();
+    // println!("Enter the name of your team: ");
+    // println!("Hello , {}", team_name);
+    let team_name = getNames();
     //let b1 = std::io::stdin().read_line(&mut line).unwrap();
+     println!("Hello , {} fan", team_name);
+    let _ = getStats(team_name);
     //let _ = getStats(team_name);
 }
 
