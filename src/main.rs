@@ -1,5 +1,5 @@
 
-use reqwest::Client;
+use reqwest::{Client, header::{AUTHORIZATION, CONTENT_TYPE, ACCEPT}};
 use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use serde_json::value;
@@ -24,21 +24,24 @@ async fn getStats(team_name: String) -> Result<(), reqwest::Error> {
     let api_secrets = Secrets::new();
 
     // Prepare headers as a HashMap
-    let mut headers = reqwest::header::HeaderMap::new();
-    headers.insert(reqwest::header::USER_AGENT, api_secrets.key.parse().unwrap());
+    // let mut headers = reqwest::header::HeaderMap::new();
+    // headers.insert(reqwest::header::USER_AGENT, api_secrets.key.parse().unwrap());
+    // headers.insert(reqwest::header::USER_AGENT, api_secrets.host.parse().unwrap());
 
-    println!("made it in the get stats function");
+    let url = format!("https://api-football-v1.p.rapidapi.com/v3/teams/statistics?league=39&season=2020&team=33");
+
     // Prepare query parameters as a HashMap
     let mut params = HashMap::new();
     params.insert("league", "premiere league");
     params.insert("season", "2023");
     params.insert("team", &team_name);
 
-    // Build the request
+    // Build the request 
     let response = client
-        .get("https://api.example.com/endpoint")
-        .headers(headers)
-        .query(&params)
+        .get(url)
+        .header("x-rapidapi-key", api_secrets.key)
+        .header("x-rapidapi-host", api_secrets.host)
+        //.query(&params)x
         .send()
         .await?;
 
@@ -62,16 +65,8 @@ fn getNames() -> String{
 }
 
  fn main() {
-    // Take input from user
-        // Take input from user
-
-    // let mut team_name = String::new();
-    // println!("Enter the name of your team: ");
-    // println!("Hello , {}", team_name);
     let team_name = getNames();
-    //let b1 = std::io::stdin().read_line(&mut line).unwrap();
-     println!("Hello , {} fan", team_name);
+    print!("Hello , {} fan", team_name);
     let _ = getStats(team_name);
-    //let _ = getStats(team_name);
 }
 
