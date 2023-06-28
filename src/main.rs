@@ -59,7 +59,7 @@ async fn getStats(team_name: String) -> Result<(), reqwest::Error> {
  
 fn getNames() -> String{
    let mut line = String::new();
-   println!("Enter your team name :");
+   println!("Enter your team name: ");
    std::io::stdin().read_line(&mut line).unwrap();
    return line;
 }
