@@ -28,20 +28,20 @@ async fn getStats(team_name: String) -> Result<(), reqwest::Error> {
     // headers.insert(reqwest::header::USER_AGENT, api_secrets.key.parse().unwrap());
     // headers.insert(reqwest::header::USER_AGENT, api_secrets.host.parse().unwrap());
 
-    let url = format!("https://api-football-v1.p.rapidapi.com/v3/teams/statistics?league=39&season=2020&team=33");
+    let url = format!("https://api-football-v1.p.rapidapi.com/v3/teams?search={}", team_name);
 
     // Prepare query parameters as a HashMap
-    let mut params = HashMap::new();
-    params.insert("league", "premiere league");
-    params.insert("season", "2023");
-    params.insert("team", &team_name);
+    // let mut params = HashMap::new();
+    // params.insert("country", "England");
+    // params.insert("season", "2023");
+
 
     // Build the request 
     let response = client
         .get(url)
         .header("x-rapidapi-key", api_secrets.key)
         .header("x-rapidapi-host", api_secrets.host)
-        //.query(&params)x
+        //.query(&params)
         .send()
         .await?;
 
