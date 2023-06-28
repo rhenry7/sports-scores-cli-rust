@@ -60,13 +60,15 @@ struct Venue {
 
 
 fn print_sports_info(teams: Vec<TeamInfo>) {
-    
-        println!("team name: {}", teams[0].team.name);
-        println!("team id: {}", teams[0].team.id);
-        println!("team country: {}", teams[0].team.country);
-        println!("team stats {}", teams[0].team.name.chars().map(|name| name.to_string()).collect::<String>());
-        println!("---------");
-    
+    for team in teams {
+        if team.team.country == "England" {
+            println!("team name: {}", team.team.name);
+            println!("team id: {}", team.team.id);
+            println!("team country: {}", team.team.country);
+            println!("team stats {}", team.team.name.chars().map(|name| name.to_string()).collect::<String>());
+            println!("---------");
+        }
+    }
 
 }
 
@@ -133,7 +135,7 @@ fn getNames() -> String{
 
  fn main() {
     let team_name = getNames();
-    print!("Hello , {} fan", team_name);
+    println!("Hello {}, fan ", team_name);
     let _ = getStats(team_name);
 }
 
