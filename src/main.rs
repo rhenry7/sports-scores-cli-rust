@@ -8,14 +8,6 @@ use std::env;
 mod secrets;
 use secrets::*;
 
-struct GameStats {
-    home_team: String,
-    away_team: String,
-    home_score: u32,
-    away_score: u32,
-    date: String,
-}
-
 #[derive(Debug, serde::Deserialize)]
 struct ApiResponse {
     get: String,
@@ -23,7 +15,7 @@ struct ApiResponse {
     errors: Vec<String>,
     results: u32,
     paging: Paging,
-    response: Vec<ResponseItem>,
+    response: Vec<TeamInfo>,
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -38,7 +30,7 @@ struct Paging {
 }
 
 #[derive(Debug, serde::Deserialize)]
-struct ResponseItem {
+struct TeamInfo {
     team: Team,
     venue: Venue,
 }
@@ -67,7 +59,16 @@ struct Venue {
 
 
 
+fn print_sports_info(teams: Vec<TeamInfo>) {
+    
+        println!("team name: {}", teams[0].team.name);
+        println!("team id: {}", teams[0].team.id);
+        println!("team country: {}", teams[0].team.country);
+        println!("team stats {}", teams[0].team.name.chars().map(|name| name.to_string()).collect::<String>());
+        println!("---------");
+    
 
+}
 
 
 #[tokio::main]
@@ -102,7 +103,9 @@ async fn getStats(team_name: String) -> Result<(), reqwest::Error> {
     reqwest::StatusCode::OK => {
         // on success, parse our JSON to an APIResponse
         match response.json::<ApiResponse>().await {
-            Ok(parsed) => println!("Success! {:?}", parsed),
+            Ok(parsed) => {
+            print_sports_info(parsed.response);
+            },
             Err(parsed) => println!("Hm, the response didn't match the shape we expected. {:?}", parsed),
         };
     }
@@ -116,6 +119,9 @@ async fn getStats(team_name: String) -> Result<(), reqwest::Error> {
 
  Ok(())
 }
+
+
+
 
  
 fn getNames() -> String{
