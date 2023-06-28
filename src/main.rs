@@ -16,6 +16,23 @@ struct GameStats {
     date: String,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+struct Team {
+    id: u32,
+    name: String,
+    country: String,
+}
+#[derive(Serialize, Deserialize, Debug)]
+struct Items<T> {
+    items: Vec<T>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct APIResponse {
+    results: Items<Team>,
+}
+
+
 
 #[tokio::main]
 async fn getStats(team_name: String) -> Result<(), reqwest::Error> {
@@ -46,14 +63,37 @@ async fn getStats(team_name: String) -> Result<(), reqwest::Error> {
         .await?;
 
     // Check if the request was successful
-    if response.status().is_success() {
-        let response_text = response.text().await?;
-        println!("Response: {}", response_text);
-    } else {
-        println!("Request failed with status code: {}", response.status());
-    }
+    // if response.status().is_success() {
+    //          response.json::<APIResponse>().await  {
+    //             Ok(parsed) => println!("Success! {:?}", parsed),
+    //             Err(_) => println!("Hm, the response didn't match the shape we expected."),
+    //         };
+     
+    //     let response_text = response.text().await?;
+    //     println!("Response: {}", response_text);
+    // } else {
+    //     println!("Request failed with status code: {}", response.status());
+    // }
 
-    Ok(())
+  
+
+    match response.status() {
+    reqwest::StatusCode::OK => {
+        // on success, parse our JSON to an APIResponse
+        match response.json::<APIResponse>().await {
+            Ok(parsed) => println!("Success! {:?}", parsed),
+            Err(_) => println!("Hm, the response didn't match the shape we expected."),
+        };
+    }
+    reqwest::StatusCode::UNAUTHORIZED => {
+        println!("Need to grab a new token");
+    }
+    other => {
+        panic!("Uh oh! Something unexpected happened: {:?}", other);
+    }
+};
+
+ Ok(())
 }
 
  
