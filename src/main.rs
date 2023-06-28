@@ -16,21 +16,57 @@ struct GameStats {
     date: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Debug, serde::Deserialize)]
+struct ApiResponse {
+    get: String,
+    parameters: Parameters,
+    errors: Vec<String>,
+    results: u32,
+    paging: Paging,
+    response: Vec<ResponseItem>,
+}
+
+#[derive(Debug, serde::Deserialize)]
+struct Parameters {
+    search: String,
+}
+
+#[derive(Debug, serde::Deserialize)]
+struct Paging {
+    current: u32,
+    total: u32,
+}
+
+#[derive(Debug, serde::Deserialize)]
+struct ResponseItem {
+    team: Team,
+    venue: Venue,
+}
+
+#[derive(Debug, serde::Deserialize)]
 struct Team {
     id: u32,
     name: String,
+    code: Option<String>,
     country: String,
-}
-#[derive(Serialize, Deserialize, Debug)]
-struct Items<T> {
-    items: Vec<T>,
+    founded: Option<u32>,
+    national: bool,
+    logo: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct APIResponse {
-    results: Items<Team>,
+#[derive(Debug, serde::Deserialize)]
+struct Venue {
+    id: Option<u32>,
+    name: Option<String>,
+    address: Option<String>,
+    city: Option<String>,
+    capacity: Option<u32>,
+    surface: Option<String>,
+    image: Option<String>,
 }
+
+
+
 
 
 
@@ -62,27 +98,12 @@ async fn getStats(team_name: String) -> Result<(), reqwest::Error> {
         .send()
         .await?;
 
-    // Check if the request was successful
-    // if response.status().is_success() {
-    //          response.json::<APIResponse>().await  {
-    //             Ok(parsed) => println!("Success! {:?}", parsed),
-    //             Err(_) => println!("Hm, the response didn't match the shape we expected."),
-    //         };
-     
-    //     let response_text = response.text().await?;
-    //     println!("Response: {}", response_text);
-    // } else {
-    //     println!("Request failed with status code: {}", response.status());
-    // }
-
-  
-
     match response.status() {
     reqwest::StatusCode::OK => {
         // on success, parse our JSON to an APIResponse
-        match response.json::<APIResponse>().await {
+        match response.json::<ApiResponse>().await {
             Ok(parsed) => println!("Success! {:?}", parsed),
-            Err(_) => println!("Hm, the response didn't match the shape we expected."),
+            Err(parsed) => println!("Hm, the response didn't match the shape we expected. {:?}", parsed),
         };
     }
     reqwest::StatusCode::UNAUTHORIZED => {
