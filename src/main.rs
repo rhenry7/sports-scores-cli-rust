@@ -1,6 +1,6 @@
 
 use reqwest::{Client, header::{AUTHORIZATION, CONTENT_TYPE, ACCEPT}};
-use std::collections::HashMap;
+use std::{collections::HashMap};
 use serde::{Deserialize, Serialize};
 use serde_json::value;
 use std::env;
@@ -58,23 +58,24 @@ struct Venue {
 }
 
 
-
-fn print_sports_info(teams: Vec<TeamInfo>) {
+fn print_sports_info(teams: Vec<TeamInfo>, country: &str)  {// Borrow the value using a reference
     for team in teams {
-        if team.team.country == "England" {
-            println!("team name: {}", team.team.name);
-            println!("team id: {}", team.team.id);
-            println!("team country: {}", team.team.country);
-            println!("team stats {}", team.team.name.chars().map(|name| name.to_string()).collect::<String>());
-            println!("---------");
-        }
+        if team.team.country == country {
+            {
+                println!("team name: {}", team.team.name);
+                println!("team id: {}", team.team.id);
+                println!("team country: {}", team.team.country);
+                let team_stats: String = team.team.name.chars().collect();
+                println!("team stats: {}", team_stats);
+                println!("---------");
+            }
+        } 
     }
-
 }
 
 
 #[tokio::main]
-async fn getStats(team_name: String) -> Result<(), reqwest::Error> {
+async fn getStats(team_name: String, country: String) -> Result<(), reqwest::Error> {
 
     let client = Client::new();
     let api_secrets = Secrets::new();
@@ -106,7 +107,7 @@ async fn getStats(team_name: String) -> Result<(), reqwest::Error> {
         // on success, parse our JSON to an APIResponse
         match response.json::<ApiResponse>().await {
             Ok(parsed) => {
-            print_sports_info(parsed.response);
+            print_sports_info(parsed.response, &country);
             },
             Err(parsed) => println!("Hm, the response didn't match the shape we expected. {:?}", parsed),
         };
@@ -126,16 +127,24 @@ async fn getStats(team_name: String) -> Result<(), reqwest::Error> {
 
 
  
-fn getNames() -> String{
+fn get_team_name() -> String{
    let mut line = String::new();
    println!("Enter your team name: ");
    std::io::stdin().read_line(&mut line).unwrap();
    return line;
 }
 
+fn get_team_country() -> String{
+   let mut line = String::new();
+   println!("Enter your team country: ");
+   std::io::stdin().read_line(&mut line).unwrap();
+   return line.trim().to_string();
+}
+
  fn main() {
-    let team_name = getNames();
+    let team_name = get_team_name();
+    let team_country = get_team_country();
     println!("Hello {}, fan ", team_name);
-    let _ = getStats(team_name);
+    let _ = getStats(team_name, team_country);
 }
 
