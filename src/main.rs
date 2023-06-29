@@ -10,10 +10,14 @@ mod secrets;
 use secrets::*;
 mod search_response;
 
+static mut TEAM_ID: i32 = 0;
+
 fn print_sports_info(teams: Vec<TeamInfo>, country: &str)  {// Borrow the value using a reference
     for team in teams {
         if team.team.country == country {
+            //unsafe { TEAM_ID = team[0].team.id };
             {
+                
                 println!("team name: {}", team.team.name);
                 println!("team id: {}", team.team.id);
                 println!("team country: {}", team.team.country);
@@ -44,9 +48,9 @@ async fn search_for_team(team_name: String, country: String) -> Result<(), reqwe
     reqwest::StatusCode::OK => {
         // on success, parse our JSON to an APIResponse
         match response.json::<ApiResponse>().await {
+                     
             Ok(parsed) => {
-            print_sports_info(parsed.response, &country);
-            get_team_stats(parsed.response);
+                 print_sports_info(parsed.response, &country);
             },
             Err(parsed) => println!("Hm, the response didn't match the shape we expected. {:?}", parsed),
         };
