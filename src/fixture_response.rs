@@ -34,28 +34,28 @@ pub struct Status {
     pub elapsed: u8,
 }
 
-fn main() {
-    let fixture: Fixture = serde_json::from_str(r#"{
-        "id": 592141,
-        "referee": "K. Friend",
-        "timezone": "UTC",
-        "date": "2021-01-12T20:15:00+00:00",
-        "timestamp": 1610482500,
-        "periods": {
-            "first": 1610482500,
-            "second": 1610486100
-        },
-        "venue": {
-            "id": 512,
-            "name": "Turf Moor",
-            "city": "Burnley"
-        },
-        "status": {
-            "long": "Match Finished",
-            "short": "FT",
-            "elapsed": 90
-        }
-    }"#).unwrap();
+// fn main() {
+//     let fixture: Fixture = serde_json::from_str(r#"{
+//         "id": 592141,
+//         "referee": "K. Friend",
+//         "timezone": "UTC",
+//         "date": "2021-01-12T20:15:00+00:00",
+//         "timestamp": 1610482500,
+//         "periods": {
+//             "first": 1610482500,
+//             "second": 1610486100
+//         },
+//         "venue": {
+//             "id": 512,
+//             "name": "Turf Moor",
+//             "city": "Burnley"
+//         },
+//         "status": {
+//             "long": "Match Finished",
+//             "short": "FT",
+//             "elapsed": 90
+//         }
+//     }"#).unwrap();
 
-    println!("{:#?}", fixture);
-}
+//     println!("{:#?}", fixture);
+// }

@@ -84,24 +84,28 @@ async fn get_team_stats(team_id: u32) -> Result<(), reqwest::Error> {
         .send()
         .await?;
 
-    match response.status() {
-    reqwest::StatusCode::OK => {
-        // on success, parse our JSON to an APIResponse
-        match response.json::<ApiResponse>().await {
-            Ok(parsed) => {
-            //print_sports_info(parsed.response, &country);
-            println!("{:?}", parsed.response);
-            },
-            Err(parsed) => println!("Hm, the response didn't match the shape we expected. {:?}", parsed),
-        };
-    }
-    reqwest::StatusCode::UNAUTHORIZED => {
-        println!("Need to grab a new token");
-    }
-    other => {
-        panic!("Uh oh! Something unexpected happened: {:?}", other);
-    }
-};
+
+    let response_text = response.text().await?;
+    println!("Response body: {}", response_text);
+    
+//     match response.status() {
+//     reqwest::StatusCode::OK => {
+//         // on success, parse our JSON to an APIResponse
+//         match response.json::<ApiResponse>().await {
+//             Ok(parsed) => {
+//             //print_sports_info(parsed.response, &country);
+//             println!("{:?}", parsed.response);
+//             },
+//             Err(parsed) => println!("Hm, the response didn't match the shape we expected. {:?}", parsed),
+//         };
+//     }
+//     reqwest::StatusCode::UNAUTHORIZED => {
+//         println!("Need to grab a new token");
+//     }
+//     other => {
+//         panic!("Uh oh! Something unexpected happened: {:?}", other);
+//     }
+// };
 
  Ok(())
 }
