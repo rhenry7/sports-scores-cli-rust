@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::value;
 use std::env;
 use chrono::{DateTime, TimeZone, Utc};
-
+use colored::Colorize;
 
 mod secrets;
 use secrets::*;
@@ -15,7 +15,6 @@ mod search_response;
 mod fixture_response;
 
 static mut TEAM_ID: u32 = 0;
-
 
 fn convert_timestamp(timestamp: u64) -> String {
     let dt = Utc.timestamp(timestamp.try_into().unwrap(), 0);
@@ -50,7 +49,7 @@ fn print_fixtures_info(teams: Vec<FixtureData>, team_id: u32) {// Borrow the val
                 println!("Match location: {:#?}", team.fixture.venue.name);
                 println!("{}: {}", team.teams.home.name, team.goals.home);
                 println!("{}: {}", team.teams.away.name, team.goals.away);
-                println!("{}, {}", team.league.name, team.league.season);
+                println!("{}, Season: {}", team.league.name, team.league.season);
                 println!("Referee: {:?}", team.fixture.referee);
                 println!("---------");
             }        
@@ -58,7 +57,6 @@ fn print_fixtures_info(teams: Vec<FixtureData>, team_id: u32) {// Borrow the val
     }
     
 }
-
 
 #[tokio::main]
 async fn search_for_team(team_name: String, country: String) -> Result<(), reqwest::Error> {
@@ -114,7 +112,7 @@ async fn get_team_stats(team_id: u32) -> Result<(), reqwest::Error> {
         .send()
         .await?;
 
-
+    // leave to test when wanting to see the shape of the response
     // let response_text = response.text().await?;
     // println!("Response body: {}", response_text);
     
