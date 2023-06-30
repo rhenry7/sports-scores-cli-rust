@@ -1,7 +1,7 @@
 
 use reqwest::{Client, header::{AUTHORIZATION, CONTENT_TYPE, ACCEPT}};
 use search_response::{TeamSearchResponse, TeamInfo};
-use fixture_response::{FixtureResponse};
+use fixture_response::{FixtureResponse, FixtureData};
 use std::{collections::HashMap};
 use serde::{Deserialize, Serialize};
 use serde_json::value;
@@ -27,6 +27,20 @@ fn print_sports_info(teams: Vec<TeamInfo>, country: &str) {// Borrow the value u
             unsafe { TEAM_ID = team.team.id };
            
         } 
+    }
+    
+}
+
+fn print_fixtures_info(teams: Vec<FixtureData>) {// Borrow the value using a reference
+    for team in teams {
+            {
+                
+                println!("Match time: {}", team.fixture.timestamp);
+                println!("Match day: {}", team.fixture.date);
+                println!("Match location: {:?}", team.fixture.venue.name);
+                println!("Referee: {:?}", team.fixture.referee);
+                println!("---------");
+            }        
     }
     
 }
@@ -96,7 +110,7 @@ async fn get_team_stats(team_id: u32) -> Result<(), reqwest::Error> {
         match response.json::<FixtureResponse>().await {
             Ok(parsed) => {
             //print_sports_info(parsed.response, &country);
-            println!("{:?}", parsed.response);
+            print_fixtures_info(parsed.response);
             },
             Err(parsed) => println!("Hm, the response didn't match the shape we expected. {:?}", parsed),
         };
