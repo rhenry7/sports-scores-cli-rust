@@ -10,12 +10,11 @@ mod secrets;
 use secrets::*;
 mod search_response;
 
-static mut TEAM_ID: i32 = 0;
+static mut TEAM_ID: u32 = 0;
 
-fn print_sports_info(teams: Vec<TeamInfo>, country: &str)  {// Borrow the value using a reference
+fn print_sports_info(teams: Vec<TeamInfo>, country: &str) {// Borrow the value using a reference
     for team in teams {
         if team.team.country == country {
-            //unsafe { TEAM_ID = team[0].team.id };
             {
                 
                 println!("team name: {}", team.team.name);
@@ -23,8 +22,11 @@ fn print_sports_info(teams: Vec<TeamInfo>, country: &str)  {// Borrow the value 
                 println!("team country: {}", team.team.country);
                 println!("---------");
             }
+            unsafe { TEAM_ID = team.team.id };
+           
         } 
     }
+    
 }
 
 
@@ -67,11 +69,11 @@ async fn search_for_team(team_name: String, country: String) -> Result<(), reqwe
 }
 
 #[tokio::main]
-async fn get_team_stats(teams: Vec<TeamInfo>) -> Result<(), reqwest::Error> {
+async fn get_team_stats(team_id: u32) -> Result<(), reqwest::Error> {
 
     let client = Client::new();
     let api_secrets = Secrets::new();
-    let url = format!("https://api-football-v1.p.rapidapi.com/v3/fixtures?season=2022&team={}", teams[0].team.id);
+    let url = format!("https://api-football-v1.p.rapidapi.com/v3/fixtures?season=2022&team={}", team_id);
 
     // Build the request 
     let response = client
@@ -126,5 +128,6 @@ fn get_team_country() -> String{
     let team_country = get_team_country();
     println!("");
     let _ = search_for_team(team_name, team_country);
+    let _ = get_team_stats(unsafe { TEAM_ID });
 }
 
