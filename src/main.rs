@@ -25,22 +25,27 @@ fn print_sports_info(teams: Vec<TeamInfo>, country: &str) {// Borrow the value u
                 println!("---------");
             }
             unsafe { TEAM_ID = team.team.id };
+            return;
            
         } 
     }
     
 }
 
-fn print_fixtures_info(teams: Vec<FixtureData>) {// Borrow the value using a reference
+fn print_fixtures_info(teams: Vec<FixtureData>, team_id: u32) {// Borrow the value using a reference
     for team in teams {
+        if team.teams.home.id == team_id  || team.teams.home.id == team_id {
             {
                 
                 println!("Match time: {}", team.fixture.timestamp);
                 println!("Match day: {}", team.fixture.date);
-                println!("Match location: {:?}", team.fixture.venue.name);
+                println!("Match location: {:#?}", team.fixture.venue.name);
+                println!("{}: {}", team.teams.home.name, team.goals.home);
+                println!("{}: {}", team.teams.away.name, team.goals.away);
                 println!("Referee: {:?}", team.fixture.referee);
                 println!("---------");
             }        
+        }
     }
     
 }
@@ -110,7 +115,7 @@ async fn get_team_stats(team_id: u32) -> Result<(), reqwest::Error> {
         match response.json::<FixtureResponse>().await {
             Ok(parsed) => {
             //print_sports_info(parsed.response, &country);
-            print_fixtures_info(parsed.response);
+            print_fixtures_info(parsed.response, team_id);
             },
             Err(parsed) => println!("Hm, the response didn't match the shape we expected. {:?}", parsed),
         };
