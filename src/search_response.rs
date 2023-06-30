@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 
 #[derive(Debug, serde::Deserialize)]
-pub struct ApiResponse {
+pub struct TeamSearchResponse {
     get: String,
     parameters: Parameters,
     errors: Vec<String>,

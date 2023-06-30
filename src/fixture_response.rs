@@ -3,9 +3,40 @@ use std::{collections::HashMap};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, serde::Deserialize)]
+pub struct FixtureResponse {
+    pub get: String,
+    pub parameters: Parameters,
+    pub errors: Vec<String>,
+    pub results: u32,
+    pub paging: Paging,
+    pub response: Vec<FixtureData>,
+}
+
+#[derive(Debug, serde::Deserialize)]
+pub struct Parameters {
+    pub season: String,
+    pub team: String,
+}
+
+#[derive(Debug, serde::Deserialize)]
+pub struct Paging {
+    pub current: u32,
+    pub total: u32,
+}
+
+#[derive(Debug, serde::Deserialize)]
+pub struct FixtureData {
+    pub fixture: Fixture,
+    pub league: League,
+    pub teams: Teams,
+    pub goals: Goals,
+    pub score: Score,
+}
+
+#[derive(Debug, serde::Deserialize)]
 pub struct Fixture {
     pub id: u32,
-    pub referee: String,
+    pub referee: Option<String>,
     pub timezone: String,
     pub date: String,
     pub timestamp: u64,
@@ -22,9 +53,9 @@ pub struct Periods {
 
 #[derive(Debug, serde::Deserialize)]
 pub struct Venue {
-    pub id: u32,
-    pub name: String,
-    pub city: String,
+    pub id: Option<u32>,
+    pub name: Option<String>,
+    pub city: Option<String>,
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -34,28 +65,47 @@ pub struct Status {
     pub elapsed: u8,
 }
 
-// fn main() {
-//     let fixture: Fixture = serde_json::from_str(r#"{
-//         "id": 592141,
-//         "referee": "K. Friend",
-//         "timezone": "UTC",
-//         "date": "2021-01-12T20:15:00+00:00",
-//         "timestamp": 1610482500,
-//         "periods": {
-//             "first": 1610482500,
-//             "second": 1610486100
-//         },
-//         "venue": {
-//             "id": 512,
-//             "name": "Turf Moor",
-//             "city": "Burnley"
-//         },
-//         "status": {
-//             "long": "Match Finished",
-//             "short": "FT",
-//             "elapsed": 90
-//         }
-//     }"#).unwrap();
+#[derive(Debug, serde::Deserialize)]
+pub struct League {
+    pub id: u32,
+    pub name: String,
+    pub country: String,
+    pub logo: String,
+    pub flag: Option<String>,
+    pub season: u32,
+    pub round: String,
+}
 
-//     println!("{:#?}", fixture);
-// }
+#[derive(Debug, serde::Deserialize)]
+pub struct Teams {
+    pub home: TeamInfo,
+    pub away: TeamInfo,
+}
+
+#[derive(Debug, serde::Deserialize)]
+pub struct TeamInfo {
+    pub id: u32,
+    pub name: String,
+    pub logo: String,
+    pub winner: Option<bool>,
+}
+
+#[derive(Debug, serde::Deserialize)]
+pub struct Goals {
+    pub home: u32,
+    pub away: u32,
+}
+
+#[derive(Debug, serde::Deserialize)]
+pub struct Score {
+    pub halftime: Option<ScoreData>,
+    pub fulltime: ScoreData,
+    pub extratime: Option<ScoreData>,
+    pub penalty: Option<ScoreData>,
+}
+
+#[derive(Debug, serde::Deserialize)]
+pub struct ScoreData {
+    pub home: Option<u32>,
+    pub away: Option<u32>,
+}

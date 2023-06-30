@@ -1,6 +1,7 @@
 
 use reqwest::{Client, header::{AUTHORIZATION, CONTENT_TYPE, ACCEPT}};
-use search_response::{ApiResponse, TeamInfo};
+use search_response::{TeamSearchResponse, TeamInfo};
+use fixture_response::{FixtureResponse};
 use std::{collections::HashMap};
 use serde::{Deserialize, Serialize};
 use serde_json::value;
@@ -9,6 +10,7 @@ use std::env;
 mod secrets;
 use secrets::*;
 mod search_response;
+mod fixture_response;
 
 static mut TEAM_ID: u32 = 0;
 
@@ -49,7 +51,7 @@ async fn search_for_team(team_name: String, country: String) -> Result<(), reqwe
     match response.status() {
     reqwest::StatusCode::OK => {
         // on success, parse our JSON to an APIResponse
-        match response.json::<ApiResponse>().await {
+        match response.json::<TeamSearchResponse>().await {
                      
             Ok(parsed) => {
                  print_sports_info(parsed.response, &country);
@@ -85,27 +87,27 @@ async fn get_team_stats(team_id: u32) -> Result<(), reqwest::Error> {
         .await?;
 
 
-    let response_text = response.text().await?;
-    println!("Response body: {}", response_text);
+    // let response_text = response.text().await?;
+    // println!("Response body: {}", response_text);
     
-//     match response.status() {
-//     reqwest::StatusCode::OK => {
-//         // on success, parse our JSON to an APIResponse
-//         match response.json::<ApiResponse>().await {
-//             Ok(parsed) => {
-//             //print_sports_info(parsed.response, &country);
-//             println!("{:?}", parsed.response);
-//             },
-//             Err(parsed) => println!("Hm, the response didn't match the shape we expected. {:?}", parsed),
-//         };
-//     }
-//     reqwest::StatusCode::UNAUTHORIZED => {
-//         println!("Need to grab a new token");
-//     }
-//     other => {
-//         panic!("Uh oh! Something unexpected happened: {:?}", other);
-//     }
-// };
+    match response.status() {
+    reqwest::StatusCode::OK => {
+        // on success, parse our JSON to an APIResponse
+        match response.json::<FixtureResponse>().await {
+            Ok(parsed) => {
+            //print_sports_info(parsed.response, &country);
+            println!("{:?}", parsed.response);
+            },
+            Err(parsed) => println!("Hm, the response didn't match the shape we expected. {:?}", parsed),
+        };
+    }
+    reqwest::StatusCode::UNAUTHORIZED => {
+        println!("Need to grab a new token");
+    }
+    other => {
+        panic!("Uh oh! Something unexpected happened: {:?}", other);
+    }
+};
 
  Ok(())
 }
