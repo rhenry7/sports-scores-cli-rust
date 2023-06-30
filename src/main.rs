@@ -2,10 +2,12 @@
 use reqwest::{Client, header::{AUTHORIZATION, CONTENT_TYPE, ACCEPT}};
 use search_response::{TeamSearchResponse, TeamInfo};
 use fixture_response::{FixtureResponse, FixtureData};
-use std::{collections::HashMap};
+use std::{collections::HashMap, time};
 use serde::{Deserialize, Serialize};
 use serde_json::value;
 use std::env;
+use chrono::{DateTime, TimeZone, Utc};
+
 
 mod secrets;
 use secrets::*;
@@ -13,6 +15,12 @@ mod search_response;
 mod fixture_response;
 
 static mut TEAM_ID: u32 = 0;
+
+
+fn convert_timestamp(timestamp: u64) -> String {
+    let dt = Utc.timestamp(timestamp.try_into().unwrap(), 0);
+    dt.format("%-I:%M %p").to_string()
+}
 
 fn print_sports_info(teams: Vec<TeamInfo>, country: &str) {// Borrow the value using a reference
     for team in teams {
@@ -25,7 +33,7 @@ fn print_sports_info(teams: Vec<TeamInfo>, country: &str) {// Borrow the value u
                 println!("---------");
             }
             unsafe { TEAM_ID = team.team.id };
-            return;
+            return; // only get the first team information 
            
         } 
     }
@@ -37,11 +45,12 @@ fn print_fixtures_info(teams: Vec<FixtureData>, team_id: u32) {// Borrow the val
         if team.teams.home.id == team_id  || team.teams.home.id == team_id {
             {
                 
-                println!("Match time: {}", team.fixture.timestamp);
+                println!("Match time: {}", convert_timestamp(team.fixture.timestamp));
                 println!("Match day: {}", team.fixture.date);
                 println!("Match location: {:#?}", team.fixture.venue.name);
                 println!("{}: {}", team.teams.home.name, team.goals.home);
                 println!("{}: {}", team.teams.away.name, team.goals.away);
+                println!("{}, {}", team.league.name, team.league.season);
                 println!("Referee: {:?}", team.fixture.referee);
                 println!("---------");
             }        
@@ -111,10 +120,8 @@ async fn get_team_stats(team_id: u32) -> Result<(), reqwest::Error> {
     
     match response.status() {
     reqwest::StatusCode::OK => {
-        // on success, parse our JSON to an APIResponse
         match response.json::<FixtureResponse>().await {
             Ok(parsed) => {
-            //print_sports_info(parsed.response, &country);
             print_fixtures_info(parsed.response, team_id);
             },
             Err(parsed) => println!("Hm, the response didn't match the shape we expected. {:?}", parsed),
@@ -148,7 +155,7 @@ fn get_team_country() -> String{
  fn main() {
     let team_name = get_team_name();
     println!("");
-    println!("Hello {}, fan ", team_name);
+    println!("Hello {} fan ", team_name);
     println!("");
     let team_country = get_team_country();
     println!("");
