@@ -1,12 +1,9 @@
 
-use reqwest::{Client, header::{AUTHORIZATION, CONTENT_TYPE, ACCEPT}};
+use reqwest::{Client, header::{}};
 use search_response::{TeamSearchResponse, TeamInfo};
 use fixture_response::{FixtureResponse, FixtureData};
-use std::{collections::HashMap, time};
-use serde::{Deserialize, Serialize};
-use serde_json::value;
-use std::env;
-use chrono::{DateTime, TimeZone, Utc};
+use std::{};
+use chrono::{TimeZone, Utc};
 
 
 mod secrets;
@@ -70,13 +67,11 @@ async fn search_for_team(team_name: String, country: String) -> Result<(), reqwe
         .get(url)
         .header("x-rapidapi-key", api_secrets.key)
         .header("x-rapidapi-host", api_secrets.host)
-        //.query(&params)
         .send()
         .await?;
 
     match response.status() {
     reqwest::StatusCode::OK => {
-        // on success, parse our JSON to an APIResponse
         match response.json::<TeamSearchResponse>().await {
                      
             Ok(parsed) => {
