@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::value;
 use std::env;
 use chrono::{DateTime, TimeZone, Utc};
-use colored::Colorize;
+
 
 mod secrets;
 use secrets::*;
