@@ -4,13 +4,7 @@ use fixture_response::{FixtureResponse, FixtureData};
 use std::{};
 use chrono::{TimeZone, Utc};
 
-use crate::{search_response, fixture_response};
-
-
-
-
-static mut TEAM_ID: u32 = 0;
-
+use crate::{search_response, fixture_response, TEAM_ID};
 
 pub fn convert_timestamp(timestamp: u64) -> String {
         let dt = Utc.timestamp(timestamp.try_into().unwrap(), 0);
