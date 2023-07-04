@@ -14,7 +14,7 @@ mod search_response;
 mod fixture_response;
 mod team_requests;
 
-pub static mut TEAM_ID: u32 = 0;
+pub static mut TEAM_ID: u32 = 0; // figure out safe way to use 
 
  fn main() {
 
@@ -26,6 +26,6 @@ pub static mut TEAM_ID: u32 = 0;
     let team_country = get_team_country();
     println!("");
     let _ = search_for_team(team_name, team_country);
-    let _ = get_team_stats(unsafe { TEAM_ID });
+    let _ = get_team_stats(unsafe { TEAM_ID }); // figure out safe way to use 
 }
 
