@@ -20,8 +20,8 @@ pub static mut TEAM_ID: u32 = 0; // figure out safe way to use
 
     let team_name = get_team_name();
 
-    println!("");
-    println!("Hello {} fan ", team_name);
+    println!();
+    println!("Hello {}, fan ", team_name);
 
     let team_country = get_team_country();
     println!("");

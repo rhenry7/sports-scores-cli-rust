@@ -54,7 +54,7 @@ pub async fn get_team_stats(team_id: u32) -> Result<(), reqwest::Error> {
         .send()
         .await?;
 
-    // leave to test when wanting to see the shape of the response
+    // TODO: use this to print raw response and to make structs for type checking
     // let response_text = response.text().await?;
     // println!("Response body: {}", response_text);
     
