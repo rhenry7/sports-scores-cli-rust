@@ -20,7 +20,7 @@ pub fn print_sports_info(teams: Vec<TeamInfo>, country: &str) {// Borrow the val
                 println!("team name: {}", team.team.name);
                 println!("team id: {}", team.team.id);
                 println!("team country: {}", team.team.country);
-                //println!("team country: {}", team.team.code);
+                println!("team country: {}", team.team.code);
                 println!("---------");
             }
             unsafe { TEAM_ID = team.team.id };
